@@ -197,7 +197,7 @@
                                 </div>
                                 <div class="col-lg-6 mb-2">
                                     <button type="submit" class="btn btn-success btn-lg btn-block"><i
-                                            class="fas fa-check"></i> Register </button>
+                                            class="fas fa-check"></i> Submit </button>
                                 </div>
                             </div>
                         </div>
