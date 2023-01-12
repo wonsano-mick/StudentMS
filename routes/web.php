@@ -1,19 +1,20 @@
 <?php
 
-use App\Http\Controllers\ClubSocietyController;
-use App\Http\Controllers\ContactController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
+use RealRashid\SweetAlert\Facades\Alert;
 use App\Http\Controllers\SchoolController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\ClubSocietyController;
 use App\Http\Controllers\ScholarshipController;
 use App\Http\Controllers\CurrentClassController;
+use App\Http\Controllers\NewAdmissionController;
 use App\Http\Controllers\GraduateStudentController;
 use App\Http\Controllers\GeneratePDFReportController;
 use App\Http\Controllers\HouseOfAffiliationController;
-use App\Http\Controllers\NewAdmissionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -62,6 +63,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/students/confirmDelete/{id}', [StudentController::class, 'deleteShow'])->name('students.delete.deleteShow');
     Route::post('/students/clubs/store', [StudentController::class, 'createClub'])->name('students.createClub');
     Route::get('/students/clubs/delete/{id}', [StudentController::class, 'deleteClub'])->name('students.deleteClub');
+    Route::post('/students/positions/store', [StudentController::class, 'createPosition'])->name('students.createPosition');
+    Route::get('/students/positions/delete/{id}', [StudentController::class, 'deletePosition'])->name('students.deletePosition');
 
     ///////////////////////// Set Term / Academic Year ///////////////////////////////////////////////////////////
     Route::get('/term', [StudentController::class, 'term'])->name('term');
@@ -74,6 +77,10 @@ Route::middleware('auth')->group(function () {
     //////////////////////////////// Dismissed Students Route ///////////////////////////////////////////////////
     Route::get('/dismissed-students', [StudentController::class, 'dismissedStudents'])->name('dismissed-students');
     Route::get('/dismissed-students/profile/{id}', [StudentController::class, 'dismissedProfile'])->name('dismissed-students.profile');
+
+    //////////////////////////////// Transfered Students Route ///////////////////////////////////////////////////
+    Route::get('/transfer-students', [StudentController::class, 'transferStudents'])->name('transfer-students');
+    Route::get('/transfer-students/profile/{id}', [StudentController::class, 'transferProfile'])->name('transfer-students.profile');
 
     ////////////////////////// Graduates Route ////////////////////////////////////////////
     Route::resource('/graduates', GraduateStudentController::class);
@@ -102,6 +109,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/print-class-list/{class_name}', [GeneratePDFReportController::class, 'printClassList']);
     Route::get('/students/print/{id}', [GeneratePDFReportController::class, 'printStudentProfile'])->name('students.print');
     Route::get('/admissions/print/{id}', [GeneratePDFReportController::class, 'admissionLetter'])->name('admissions.print');
+
+    ///////////////////// Residence Routes /////////////////////////////////////////////////////////////////////
+    Route::get('/residence/{day}', [StudentController::class, 'day'])->name('residence');
+    Route::get('/residence/boarders/{boarding}', [StudentController::class, 'boarding'])->name('residence.boarders');
+    Route::get('/residence/archive/{status}', [StudentController::class, 'archive'])->name('residence.archive');
 
     ////////////////////// Student Population Statistics /////////////////////////////////////////////////////
     Route::get('/males/population', [StudentController::class, 'males'])->name('males.population');

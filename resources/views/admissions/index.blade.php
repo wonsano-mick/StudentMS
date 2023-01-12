@@ -95,10 +95,12 @@
                             <div class="row">
                                 <div class="input-group">
                                     <div class="input-group-prepend mb-3">
+                                        {{-- <span class="input-group-text bg-primary text-white" style="width:160px;">Admission
+                                            Number</span> --}}
                                         <span class="input-group-text bg-primary text-white" style="width:160px;">Admission
-                                            Number</span>
+                                            Date</span>
                                     </div>
-                                    @php
+                                    {{-- @php
                                         $LastIdQuery = App\Models\NewAdmission::latest('id')->first();
                                         $Year = Str::substr(date('Y'), 2, 2);
                                         if ($LastIdQuery === null) {
@@ -115,7 +117,8 @@
                                         }
                                     @endphp
                                     <input class="form-control" type="text" name="admission_number"
-                                        placeholder="Enter Class" value="{{ $AdmissionNumber }}" readonly>
+                                        placeholder="Enter Class" value="{{ $AdmissionNumber }}" readonly> --}}
+                                    <input class="form-control" type="date" name="date">
                                 </div>
                                 <div class="input-group">
                                     <div class="input-group-prepend mb-3">

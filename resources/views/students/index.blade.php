@@ -56,7 +56,7 @@
                                     </a>
                                 </td>
                                 <td>{{ $Student->gender }}</td>
-                                <td>{{ $Student->current_class }}</td>
+                                <td>{{ $Student->current_class . '' . $Student->sub_current_class }}</td>
                                 <td>{{ $Student->mobile_number }}</td>
                                 <td>
                                     <a href="{{ route('students.profile', $Student->student_id) }}"

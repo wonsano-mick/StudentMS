@@ -53,6 +53,7 @@
                                 {{ old('reason') }}</option>
                             <option value="Graduated" style="font-size:20px;">Graduated</option>
                             <option value="Withdrawn" style="font-size:20px;">Withdrawn</option>
+                            <option value="Transfer" style="font-size:20px;">Transfer</option>
                             <option value="Dismissed" style="font-size:20px;">Dismissed</option>
                         </select>
                     </div>

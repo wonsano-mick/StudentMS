@@ -183,7 +183,7 @@
                             <span style="font-weight: bold">Name of School:</span><span
                                 class="student-personal-info-4 student-text">{{ $StudentLastSchool->last_school_attended }}</span><br>
                             <span style="font-weight: bold">Date of Exit:</span><span
-                                class="student-personal-info-2 student-text">{{ $StudentLastSchool->date_of_last_school_exit }}</span><br>
+                                class="student-personal-info-2 student-text">{{ date('d-M-Y', strtotime($StudentLastSchool->date_of_last_school_exit)) }}</span><br>
                             <span style="font-weight: bold">Reason for Exit:</span><span
                                 class="student-personal-info-5 student-text">{{ $StudentLastSchool->reason_for_exit }}</span><br>
                         @endif

@@ -19,6 +19,7 @@ class SchoolController extends Controller
      */
     public function index()
     {
+
         // if (Auth::user()->user_level != 'Unlimited') {
         //     Alert::error('Error', 'Access Denied. Please Contact the Administrator');
         //     return back();

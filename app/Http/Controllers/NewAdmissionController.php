@@ -25,6 +25,7 @@ class NewAdmissionController extends Controller
      */
     public function index()
     {
+
         $NewAdmissions  = NewAdmission::where('admitted', 'No')->get();
         return view('admissions.index', compact('NewAdmissions'));
     }
@@ -48,7 +49,7 @@ class NewAdmissionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'admission_number' => 'required|unique:new_admissions,admission_number',
+            // 'admission_number' => 'required|unique:new_admissions,admission_number',
             'sur_name' => 'required',
             'other_names' => 'required',
             'current_class' => 'required',
@@ -59,8 +60,28 @@ class NewAdmissionController extends Controller
         ]);
         $FeesInWords        = Helper::convertNumber($request->fees);
 
+        $LastIdQuery = NewAdmission::latest('id')->first();
+        $Date       = $request->date;
+
+        // dd($request->date);
+
+        $Year = Str::of($request->date)->substr(2, 2);
+        if ($LastIdQuery === null) {
+            $Id = 1;
+            $RandomId = random_int(100, 999);
+            $spri_id = sprintf('%03d', $Id);
+            $AdmissionNumber = "$Year" . "$spri_id" . "$RandomId";
+        } else {
+            $LastId = $LastIdQuery->id;
+            $RandomId = random_int(100, 999);
+            $Id = $LastId + 1;
+            $spri_id = sprintf('%03d', $Id);
+            $AdmissionNumber = "$Year" . "$spri_id" . "$RandomId";
+        }
+
         $AdmitStudent       = new NewAdmission;
-        $AdmitStudent->admission_number     = $request->admission_number;
+        // $AdmitStudent->admission_number     = $request->admission_number;
+        $AdmitStudent->admission_number     = $AdmissionNumber;
         $AdmitStudent->sur_name             = ucwords($request->sur_name);
         $AdmitStudent->other_names          = ucwords($request->other_names);
         $AdmitStudent->class                = $request->current_class;

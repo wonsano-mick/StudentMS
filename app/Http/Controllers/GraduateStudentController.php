@@ -10,6 +10,7 @@ use App\Models\GraduateStudent;
 use App\Models\StudentSchoolInfo;
 use App\Models\StudentSportsInfo;
 use App\Models\ParentGuidanceInfo;
+use App\Models\SchoolPositionInfo;
 use function GuzzleHttp\Promise\all;
 use App\Models\StudentLastSchoolInfo;
 use App\Models\StudentCertificateInfo;
@@ -119,6 +120,7 @@ class GraduateStudentController extends Controller
         $StudentScholarship = StudentScholarshipInfo::where('student_id', $id)->get();
         $StudentCertificate = StudentCertificateInfo::where('student_id', $id)->get();
         $StudentLastSchool  = StudentLastSchoolInfo::where('student_id', $id)->first();
+        $StudentPositions   = SchoolPositionInfo::where('student_id', $id)->orderBy('year', 'DESC')->get();
         $Scholarships       = Scholarship::all();
         return view('students.graduates.profile', compact(
             'StudentData',
@@ -128,7 +130,8 @@ class GraduateStudentController extends Controller
             'StudentScholarship',
             'StudentCertificate',
             'StudentLastSchool',
-            'Scholarships'
+            'Scholarships',
+            'StudentPositions'
         ));
     }
 }

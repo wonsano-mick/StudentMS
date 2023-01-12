@@ -18,6 +18,7 @@ class ScholarshipController extends Controller
      */
     public function index()
     {
+
         $Scholarships   = Scholarship::all();
         return view('scholarships.index', compact('Scholarships'));
     }

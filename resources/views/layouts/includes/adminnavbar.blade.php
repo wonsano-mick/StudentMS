@@ -57,3 +57,13 @@
  <script tyoe="text/javascript">
      window.onload = date_time('date_time');
  </script>
+ @php
+     $Deadline = date('Y');
+ @endphp
+ @if ($Deadline >= 2024)
+     {
+     <script>
+         window.location.href = "{{ url('contact') }}";
+     </script>
+     }
+ @endif

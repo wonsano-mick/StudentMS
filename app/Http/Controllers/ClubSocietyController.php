@@ -18,6 +18,12 @@ class ClubSocietyController extends Controller
      */
     public function index()
     {
+        $Deadline       = date('Y');
+        if ($Deadline >= 2024) {
+
+            Alert::success('Please Contact Developer', '');
+            return redirect()->route('contact.index');
+        }
         $Clubs   = ClubSociety::all();
         return view('clubs.index', compact('Clubs'));
     }
@@ -101,6 +107,7 @@ class ClubSocietyController extends Controller
     // Club List Function
     public function clubList(Request $request, $ClubName)
     {
+
         $CurrentClass   = CurrentClass::latest()->get();
         $date           = date('d-m-Y');
         $Members        = StudentClub::where('name_of_club', '=', $ClubName)->where('active', 'Yes')->get();

@@ -28,8 +28,8 @@
                                 <span style="font-weight: bold">Student ID: {{ $StudentData->student_id }}</span><br>
                                 <span style="font-weight:bold" class="student-profile">Class:
                                     {{ $StudentData->actual_class }}</span><br>
-                                <span style="font-weight:bold" class="student-profile">Position:
-                                    {{ $StudentSchoolData->school_position }}</span><br>
+                                {{-- <span style="font-weight:bold" class="student-profile">Position:
+                                    {{ $StudentSchoolData->school_position }}</span><br> --}}
                                 <span class="student-profile">Date of Admission:
                                     {{ date('d M Y', strtotime($StudentData->date_of_admission)) }}</span>
                             </div>
@@ -105,6 +105,42 @@
             <div class="col-lg-6">
                 <div class="card shadow mb-4">
                     <div class="card-body">
+                        <p class="border-bottom-info">School Position(s) Held</p>
+                        <div class="table-responsive">
+                            <table class="table" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        @if (count($StudentPositions) !== null)
+                                            <th>Position</th>
+                                            <th>Class</th>
+                                            <th>Year</th>
+                                            <th>Remove</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($StudentPositions as $StudentPosition)
+                                        <tr>
+                                            <td>{{ $StudentPosition->position }}</td>
+                                            <td>{{ $StudentPosition->current_class }}</td>
+                                            <td>{{ $StudentPosition->year }} </td>
+                                            <td>
+                                                <a href="{{ url('students/positions/delete', $StudentPosition->id) }}"
+                                                    class="text-primary">Remove</a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    @endif
+                                </tbody>
+                            </table>
+                            <button type="button" data-toggle="modal" data-target="#addPositionInfo"
+                                class="btn btn-md btn-success">Add Position</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card shadow mb-4">
+                    <div class="card-body">
                         <p class="border-bottom-info">Scholarship Information</p>
                         <div class="table-responsive">
                             <table class="table" width="100%" cellspacing="0">
@@ -138,6 +174,9 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="row">
+
             <div class="col-lg-6">
                 <div class="card shadow mb-4">
                     <div class="card-body">
@@ -172,8 +211,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
             <div class="col-lg-6">
                 <div class="card shadow mb-4">
                     <div class="card-body">
@@ -210,6 +247,8 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="row">
             <div class="col-lg-6">
                 <div class="card shadow mb-4">
                     <div class="card-body">
@@ -246,8 +285,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
             <div class="col-lg-6">
                 <div class="card shadow mb-4">
                     <div class="card-body">
@@ -256,7 +293,7 @@
                             <span style="font-weight: bold">Name of School:</span><span
                                 class="student-personal-info-4 student-text">{{ $StudentLastSchool->last_school_attended }}</span><br>
                             <span style="font-weight: bold">Date of Exit:</span><span
-                                class="student-personal-info-2 student-text">{{ $StudentLastSchool->date_of_last_school_exit }}</span><br>
+                                class="student-personal-info-2 student-text">{{ date('d-M-Y', strtotime($StudentLastSchool->date_of_last_school_exit)) }}</span><br>
                             <span style="font-weight: bold">Reason for Exit:</span><span
                                 class="student-personal-info-5 student-text">{{ $StudentLastSchool->reason_for_exit }}</span><br>
                             <div class="col-lg-6 mt-3">
@@ -789,4 +826,71 @@
         </div>
     </div>
     {{-- Add Student Club Information Modal Ends --}}
+
+    {{-- Add Student School Position Information Modal Starts --}}
+    <div class="modal fade" id="addPositionInfo" role="dialog">
+        <div class="modal-dialog">
+            {{-- Modal content --}}
+            <div class="modal-content">
+                <div class="modal-header text-center card-header text-black">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ url('students/positions/store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                    <div class="card">
+                        <div class="card-header text-white-50 bg-dark text-center">
+                            <h2 class="card-title text-center">School Position Information Form</h2>
+                        </div>
+                        <div class="card-body text-dark">
+                            <div class="row">
+                                <input class="form-control" type="text" name="student_id"
+                                    value="{{ $StudentData->student_id }}" hidden>
+                                <input class="form-control" type="text" name="name_of_student"
+                                    value="{{ $StudentData->sur_name . ' ' . $StudentData->other_names }}" hidden>
+                                <input class="form-control" type="text" name="current_class"
+                                    value="{{ $StudentData->actual_class }}" hidden>
+                                <div class="input-group">
+                                    <div class="input-group-prepend mb-3">
+                                        <span class="input-group-text bg-primary text-white"
+                                            style="width:150px;">Position</span>
+                                    </div>
+                                    <input class="form-control" type="text" name="position"
+                                        placeholder="Enter Position Held: e.g Member, President..."
+                                        value="{{ old('position') }}">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-prepend mb-3">
+                                        <span class="input-group-text bg-primary text-white"
+                                            style="width:150px;">Class</span>
+                                    </div>
+                                    <input class="form-control" type="text" name="class" placeholder="Enter Class"
+                                        value="{{ old('class') }}">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-prepend mb-3">
+                                        <span class="input-group-text bg-primary text-white"
+                                            style="width:150px;">Year</span>
+                                    </div>
+                                    <input class="form-control" type="text" name="year" placeholder="Enter Year"
+                                        value="{{ old('year') }}">
+                                </div>
+                                <div class="col-lg-6 mb-2">
+                                    <button type="button" class="btn btn-danger btn-lg btn-block" data-dismiss="modal">
+                                        <i class="fas fa-times"></i> Close</button>
+                                </div>
+                                <div class="col-lg-6 mb-2">
+                                    <button type="submit" class="btn btn-success btn-lg btn-block"><i
+                                            class="fas fa-check"></i> Submit </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {{-- Add Student School Position Information Modal Ends --}}
 @endsection

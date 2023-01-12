@@ -30,8 +30,8 @@
                                     {{ $StudentData->current_class }}</span><br>
                                 <span style="font-weight:bold" class="student-profile">Class Before:
                                     {{ $StudentData->class_before }}</span><br>
-                                <span style="font-weight:bold" class="student-profile">Position Held:
-                                    {{ $StudentSchoolData->school_position }}</span><br>
+                                {{-- <span style="font-weight:bold" class="student-profile">Position Held:
+                                    {{ $StudentSchoolData->school_position }}</span><br> --}}
                                 <span class="student-profile">Date of Admission:
                                     {{ date('d-M Y', strtotime($StudentData->date_of_admission)) }}</span><br>
                                 <span class="student-profile">Date Dismissed:
@@ -54,8 +54,36 @@
                 </div>
             </div>
         </div>
-
         <div class="row">
+            <div class="col-lg-6">
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <p class="border-bottom-info">School Position(s) Held</p>
+                        <div class="table-responsive">
+                            <table class="table" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        @if (count($StudentPositions) !== null)
+                                            <th>Position</th>
+                                            <th>Class</th>
+                                            <th>Year</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($StudentPositions as $StudentPosition)
+                                        <tr>
+                                            <td>{{ $StudentPosition->position }}</td>
+                                            <td>{{ $StudentPosition->current_class }}</td>
+                                            <td>{{ $StudentPosition->year }} </td>
+                                        </tr>
+                                    @endforeach
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="col-lg-6">
                 <div class="card shadow mb-4">
                     <div class="card-body">
@@ -67,6 +95,8 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="row">
             <div class="col-lg-6">
                 <div class="card shadow mb-4">
                     <div class="card-body">
@@ -86,8 +116,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
             <div class="col-lg-6">
                 <div class="card shadow mb-4">
                     <div class="card-body">
@@ -117,6 +145,8 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="row">
             <div class="col-lg-6">
                 <div class="card shadow mb-4">
                     <div class="card-body">
@@ -144,8 +174,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
             <div class="col-lg-6">
                 <div class="card shadow mb-4">
                     <div class="card-body">
@@ -183,7 +211,7 @@
                             <span style="font-weight: bold">Name of School:</span><span
                                 class="student-personal-info-4 student-text">{{ $StudentLastSchool->last_school_attended }}</span><br>
                             <span style="font-weight: bold">Date of Exit:</span><span
-                                class="student-personal-info-2 student-text">{{ $StudentLastSchool->date_of_last_school_exit }}</span><br>
+                                class="student-personal-info-2 student-text">{{ date('d-M-Y', strtotime($StudentLastSchool->date_of_last_school_exit)) }}</span><br>
                             <span style="font-weight: bold">Reason for Exit:</span><span
                                 class="student-personal-info-5 student-text">{{ $StudentLastSchool->reason_for_exit }}</span><br>
                         @endif

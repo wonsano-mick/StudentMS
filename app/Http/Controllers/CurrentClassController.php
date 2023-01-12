@@ -29,6 +29,7 @@ class CurrentClassController extends Controller
      */
     public function index()
     {
+
         $CurrentClass   = CurrentClass::latest()->get();
         return view('current-classes.index', [
             'title' => 'Class',

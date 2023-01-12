@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Models\GraduateStudent;
 use App\Models\HouseOfAffiliation;
 use App\Models\ParentGuidanceInfo;
+use App\Models\SchoolPositionInfo;
 use App\Models\StudentCertificateInfo;
 use App\Models\StudentClub;
 use App\Models\StudentLastSchoolInfo;
@@ -32,6 +33,7 @@ class StudentController extends Controller
      */
     public function index()
     {
+
         $Students   = Student::all();
         return view('students.index', compact('Students'));
     }
@@ -398,12 +400,19 @@ class StudentController extends Controller
                     'exit_date' => date('d M Y', strtotime($request->date_of_delete))
                 ]);
             }
+            $StudentClub    = StudentClub::where('student_id', $request->student_id)->first();
+            if ($StudentClub !== null) {
+                $updateStudentClub  = StudentClub::where('student_id', $request->student_id)->update([
+                    'current_class' => $request->reason,
+                    'active' => 'No'
+                ]);
+            }
             $StudentData->delete();
             Alert::success('Congrats', ucwords($request->name_of_student) . '\'s Details Successfully Removed ');
             return redirect()->route('students.index');
         }
 
-        if ($request->reason == 'Withdrawn' || $request->reason == 'Dismissed') {
+        if ($request->reason == 'Withdrawn' || $request->reason == 'Dismissed' || $request->reason == 'Transfer') {
 
             $ExitStudent    = new WithdrawnStudent;
             $ExitStudent->student_id            = $request->student_id;
@@ -448,6 +457,14 @@ class StudentController extends Controller
                     'exit_date' => date('d M Y', strtotime($request->date_of_delete))
                 ]);
             }
+
+            $StudentClub    = StudentClub::where('student_id', $request->student_id)->first();
+            if ($StudentClub !== null) {
+                $updateStudentClub  = StudentClub::where('student_id', $request->student_id)->update([
+                    'current_class' => $request->reason,
+                    'active' => 'No'
+                ]);
+            }
             $StudentData->delete();
             Alert::success('Congrats', ucwords($request->name_of_student) . '\'s Details Successfully Removed ');
             return redirect()->route('students.index');
@@ -469,6 +486,7 @@ class StudentController extends Controller
         $StudentLastSchool  = StudentLastSchoolInfo::where('student_id', $id)->first();
         $Clubs              = ClubSociety::all();
         $StudentClubs       = StudentClub::where('student_id', $id)->get();
+        $StudentPositions   = SchoolPositionInfo::where('student_id', $id)->orderBy('year', 'DESC')->get();
         $Scholarships       = Scholarship::all();
         return view('students.profiles.profile', compact(
             'StudentData',
@@ -480,7 +498,8 @@ class StudentController extends Controller
             'StudentLastSchool',
             'Scholarships',
             'Clubs',
-            'StudentClubs'
+            'StudentClubs',
+            'StudentPositions'
         ));
     }
 
@@ -666,6 +685,35 @@ class StudentController extends Controller
         Alert::success('Congrats', 'Club Details Removed successfully!!');
         return back();
     }
+
+    public function createPosition(Request $request)
+    {
+        $request->validate([
+            'position' => 'required',
+            'class' => 'required',
+            'year' => 'required'
+        ]);
+
+        $InsertClub  = new SchoolPositionInfo();
+        $InsertClub->student_id          = $request->student_id;
+        $InsertClub->current_class       = ucwords($request->class);
+        $InsertClub->student_name        = ucwords($request->name_of_student);
+        $InsertClub->position            = ucwords($request->position);
+        $InsertClub->year                = $request->year;
+
+        $InsertClub->save();
+
+        Alert::success('Congrats', 'Position Details is successfully Added !!');
+        return back();
+    }
+    public function deletePosition($id)
+    {
+        $StudentClubData = SchoolPositionInfo::find($id);
+        $StudentClubData->delete();
+
+        Alert::success('Congrats', 'Position Details Removed successfully!!');
+        return back();
+    }
     /*=========================================================================================================
             Withdrwan and Dismissed Students
 ========================================================================================================*/
@@ -689,8 +737,9 @@ class StudentController extends Controller
         $StudentScholarship = StudentScholarshipInfo::where('student_id', $id)->get();
         $StudentCertificate = StudentCertificateInfo::where('student_id', $id)->get();
         $StudentLastSchool  = StudentLastSchoolInfo::where('student_id', $id)->first();
+        $StudentPositions   = SchoolPositionInfo::where('student_id', $id)->orderBy('year', 'DESC')->get();
         $Scholarships       = Scholarship::all();
-        return view('students.dismissedprofile', compact(
+        return view('students.withdrawnprofile', compact(
             'StudentData',
             'StudentSchoolData',
             'StudentParentData',
@@ -698,7 +747,8 @@ class StudentController extends Controller
             'StudentScholarship',
             'StudentCertificate',
             'StudentLastSchool',
-            'Scholarships'
+            'Scholarships',
+            'StudentPositions'
         ));
     }
 
@@ -722,6 +772,7 @@ class StudentController extends Controller
         $StudentScholarship = StudentScholarshipInfo::where('student_id', $id)->get();
         $StudentCertificate = StudentCertificateInfo::where('student_id', $id)->get();
         $StudentLastSchool  = StudentLastSchoolInfo::where('student_id', $id)->first();
+        $StudentPositions   = SchoolPositionInfo::where('student_id', $id)->orderBy('year', 'DESC')->get();
         $Scholarships       = Scholarship::all();
         return view('students.dismissedprofile', compact(
             'StudentData',
@@ -731,7 +782,43 @@ class StudentController extends Controller
             'StudentScholarship',
             'StudentCertificate',
             'StudentLastSchool',
-            'Scholarships'
+            'Scholarships',
+            'StudentPositions'
+        ));
+    }
+
+    public function transferStudents()
+    {
+        $CurrentClass       = CurrentClass::latest()->get();
+        $DismissedStudents  = WithdrawnStudent::where('current_class', 'Transfer')->get();
+        return view('students.transfer-students', [
+            'title' => 'Dismissed Students',
+            'CurrentClass' => $CurrentClass,
+            'DismissedStudents' => $DismissedStudents
+        ]);
+    }
+
+    public function transferProfile($id)
+    {
+        $StudentData        = WithdrawnStudent::where('student_id', $id)->first();
+        $StudentSchoolData  = StudentSchoolInfo::where('student_id', $id)->first();
+        $StudentParentData  = ParentGuidanceInfo::where('student_id', $id)->first();
+        $StudentSportsData  = StudentSportsInfo::where('student_id', $id)->get();
+        $StudentScholarship = StudentScholarshipInfo::where('student_id', $id)->get();
+        $StudentCertificate = StudentCertificateInfo::where('student_id', $id)->get();
+        $StudentLastSchool  = StudentLastSchoolInfo::where('student_id', $id)->first();
+        $StudentPositions   = SchoolPositionInfo::where('student_id', $id)->orderBy('year', 'DESC')->get();
+        $Scholarships       = Scholarship::all();
+        return view('students.transferprofile', compact(
+            'StudentData',
+            'StudentSchoolData',
+            'StudentParentData',
+            'StudentSportsData',
+            'StudentScholarship',
+            'StudentCertificate',
+            'StudentLastSchool',
+            'Scholarships',
+            'StudentPositions'
         ));
     }
 
@@ -744,7 +831,31 @@ class StudentController extends Controller
     }
 
 
+    /*=================================================================================================
+                Student Residence Codes
+    =================================================================================================*/
 
+    public function day($status)
+    {
+        $DayStudents        = StudentSchoolInfo::where('residential_status', $status)->where('active', 'Yes')->get();
+        return view('students.residence.day', compact('DayStudents'));
+    }
+
+    public function boarding($status)
+    {
+        $Boarders        = StudentSchoolInfo::where('residential_status', $status)->where('active', 'Yes')->get();
+        return view('students.residence.boarding', compact('Boarders'));
+    }
+
+    public function archive($status)
+    {
+        $ResidentialStatus  = $status;
+        $Students   = StudentSchoolInfo::where('residential_status', $status)->where('active', 'No')->get();
+        return view('students.residence.archive', compact(
+            'Students',
+            'ResidentialStatus'
+        ));
+    }
     /*===============================================================================================================
                 Set Term and Academic Year
     ===============================================================================================================*/
@@ -789,7 +900,7 @@ class StudentController extends Controller
                     $NewClassId     = $Student->current_class_id + 1;
                 }
 
-                $FetchClass     = CurrentClass::where('id', '=', $NewClassId)->get();
+                $FetchClass     = CurrentClass::where('current_class_id', '=', $NewClassId)->get();
                 foreach ($FetchClass as $NewClass) {
 
                     $UpdateClass      = Student::where('student_id', '=', $Student->student_id)->update([
